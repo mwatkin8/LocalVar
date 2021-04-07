@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+{% block body %}
+<div class="row">
+  <div class="col-md-8">
+    <h3 class="pb-3 mb-4 border-bottom">
+      LocalVar
+    </h3>
+    <div >
+      <p>
+          There are a growing number of genetic variant databases, most of which include insightful annotations:
+          <ul>
+              <li><i><a href="https://www.ncbi.nlm.nih.gov/clinvar/">ClinVar</a></i> - "aggregates information about genomic variation and its relationship to human health."</li>
+              <li><i><a href="https://clinicalgenome.org/">ClinGen</a></i> - "a central resource that defines the clinical relevance of genes and variants for use in precision medicine and research."</li>
+              <li><i><a href="https://www.ncbi.nlm.nih.gov/snp/">dbSNP</a></i> - "contains human single nucleotide variations, microsatellites, and small-scale insertions and deletions along with publication, population frequency, molecular consequence, and genomic and RefSeq mapping information for both common variations and clinical mutations."</li>
+              <li><i><a href="https://gnomad.broadinstitute.org/">gnomAD</a></i> - "aggregates and harmonizes both exome and genome sequencing data from a wide variety of large-scale sequencing projects and makes summary data available for the wider scientific community."</li>
+              <li><i><a href="https://www.ncbi.nlm.nih.gov/dbvar/">dbVar</a></i> - "NCBI's database of human genomic Structural Variation — large variants >50 bp including insertions, deletions, duplications, inversions, mobile elements, translocations, and complex variants."</li>
+              <li><i><a href="https://civicdb.org/home">CIViC</a></i> - "open access, open source, community-driven web resource for Clinical Interpretation of Variants in Cancer."</li>
+              <li><i><a href="https://cancer.sanger.ac.uk/cosmic">COSMIC</a></i> - "the Catalogue Of Somatic Mutations In Cancer, is the world's largest and most comprehensive resource for exploring the impact of somatic mutations in human cancer."</li>
+          </ul>
+          In responose to this rising volume of variant data, REST-based tools have also been created to map between genome versions and harmonize identifiers across databases:
+          <ul>
+              <li><i><a href="https://clinicalgenome.org/">ClinGen Allele Registry</a></i> - "provides and maintains identifiers for genetic variants."</li>
+              <li><i><a href="https://myvariant.info/">MyVariant.info</a></i> - "simple-to-use REST web services to query/retrieve variant annotation data, aggregated from many popular data resources."</li>
+          </ul>
+          <u>However, each of these services are designed for query-based knowledge retrieval.</u> In practice, most variant data is stored in local collections that require custom tooling to track provenance, record edit history, update HGVS expressions, and update interpretation information.
+
+
+          <br><br>
+          <img class="info-model" src="../static/images/info-model.png">
+          <br><br>
+          They are also used to generate computed identifiers (<i>shown below</i>).
+      </p>
+      <hr>
+      <h4 style="font-weight:normal">VRS Computed Identifiers</h4>
+      <p>The following description comes from the <a href="https://vr-spec.readthedocs.io/en/1.0/impl-guide/computed_identifiers.html">specification</a>.</p>
+      <blockquote>
+          <p style="padding-left:5px;">
+              VRS provides an algorithmic solution to deterministically generate a globally unique identifier from a VRS object itself. All valid implementations of the VRS Computed Identifier will generate the same identifier when the objects are identical, and will generate different identifiers when they are not. The <a href="https://vr-spec.readthedocs.io/en/1.0/impl-guide/computed_identifiers.html#truncated-digest-sha512t24u">VRS Computed Digest algorithm</a> obviates centralized registration services, allows computational pipelines to generate “private” ids efficiently, and makes it easier for distributed groups to share data.
+          </p>
+      </blockquote>
+      <p>Continuation of the <a href="https://vr-spec.readthedocs.io/en/1.0/impl-guide/example.html">example</a> from the specification.</p>
+      <img class="vr-digest-flow" src="../static/images/vr-digest-flow.png"/><br><br>
+      <p>These computed identifiers together serve as a globally unique way to represent an instance of variation. They can be used to reliably exchange relevant annotations and other associated variantion knowledge artifacts.</p>
+    </div><!-- /.blog-post -->
+  </div><!-- /.blog-main -->
+  <aside class="col-md-4">
+    <div class="p-3 mb-3 bg-light rounded">
+      <h4 style="font-weight:normal" class="font-italic">At a Glance...</h4>
+      <p class="mb-0">LocalVar allows you to conveniently manage your variant collection with the following features:</p>
+      <ol class="pt-2">
+            <li>Auto-complete search bar</li>
+            <li>Single or bulk new data entry</li>
+            <li>Auto-detection of duplicate entries</li>
+            <li>Auto-detection and merge suggestions for HGVS synonyms</li>
+            <li>Asynchronous suggestion of HGVS or Interpretation updates</li>
+            <li>History tracking of additions, merges, updates, or other edits</li>
+            <li>Easy export of the collection (.csv), history (.json), or synonym bins (.json)</li>
+      </ol>
+
+    </div>
+    <div class="p-3">
+      <h4 style="font-weight:normal">Links</h4>
+      <ol class="list-unstyled mb-0">
+        <li><a href="https://github.com/ga4gh/vrs">GitHub Repository</a></li>
+      </ol>
+    </div>
+  </aside><!-- /.blog-sidebar -->
+</div><!-- /.row -->
+<br /><br /><br /><br /><br /><br />
+<!-- Icons -->
+<script src="https://unpkg.com/feather-icons/dist/feather.min.js"></script>
+<script>
+  feather.replace()
+</script>
+{% endblock %}

@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% block body %}
+<p><a class="btn btn-small btn-outline-primary" href="{{ filepath }}" download="{{ filename }}" >Download <span data-feather="download"></span></a> &nbsp; &nbsp;{{ filename }}</p>
+<p>&nbsp;</p>
+<div style="height:100vh" id="file-view">
+  <pre>{{ content }}</pre>
+</div>
+<!-- Icons -->
+<script src="https://unpkg.com/feather-icons/dist/feather.min.js"></script>
+<script>
+  feather.replace()
+</script>
+{% endblock %}

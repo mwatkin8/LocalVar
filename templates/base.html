@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="../static/images/icon.png">
+
+    <title>LocalVar</title>
+
+    <!-- CSS -->
+    <link href="../static/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../static/css/base.css" rel="stylesheet">
+    <!-- JS -->
+    <script src="../static/js/script.js"></script>
+  </head>
+
+  <body onload="highlight('{{ selected }}')">
+    <nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0">
+      <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="#"><img src="../static/images/icon.png" width="25" height="25"/> LocalVar</a>
+    </nav>
+    <div id="loading" class="loading"><span class="loading_text pl-5">Initializing...</span><span class="loading_sub pl-5">This can take longer for large collections</span></div>
+    <div id="non-loading" class="container-fluid">
+      <div class="row">
+        <nav class="col-md-2 d-none d-md-block bg-light sidebar">
+          <div class="sidebar-sticky">
+            <ul id="sidebar-list" class="nav flex-column">
+              <li id="new-collection" class="nav-item">
+                <a class="nav-link" href="/new-collection">
+                  <span data-feather="file-plus"></span>
+                  New Collection
+                </a>
+              </li>
+              <li id="viewer" class="nav-item">
+                <a class="nav-link active" href="/">
+                  <span data-feather="list"></span>
+                  View Collection
+                </a>
+              </li>
+              <li id="suggestions" class="nav-item">
+                <a class="nav-link" href="/suggestions?type=update">
+                  <span data-feather="alert-circle"></span>
+                  Suggestions <span class="badge badge-secondary">1713</span>
+                </a>
+              </li>
+            </ul>
+
+            <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
+              <span>Reports</span>
+            </h6>
+            <ul id="report-list" class="nav flex-column mb-2">
+                <li id="csv" class="nav-item">
+                  <a class="nav-link" href="/file?type=collection">
+                    <span data-feather="file-text"></span>
+                    Snapshot (.csv)
+                  </a>
+                </li>
+                  <li id="history" class="nav-item">
+                    <a class="nav-link" href="/file?type=history">
+                      <span data-feather="file-text"></span>
+                      History
+                    </a>
+                  </li>
+                  <li id="bins" class="nav-item">
+                    <a class="nav-link" href="/file?type=bins">
+                      <span data-feather="file-text"></span>
+                      HGVS Bins
+                    </a>
+                  </li>
+            </ul>
+
+            <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
+              <span>About</span>
+            </h6>
+            <ul id="about-list" class="nav flex-column mb-2">
+              <li id="about-localvar" class="nav-item">
+                <a class="nav-link" href="/about?type=local">
+                  <span data-feather="help-circle"></span>
+                  LocalVar
+                </a>
+              </li>
+              <li id="about-vrs" class="nav-item">
+                <a class="nav-link" href="/about?type=vrs">
+                  <span data-feather="help-circle"></span>
+                  VRS
+                </a>
+              </li>
+              <br />
+              <span id="table-load"><img class="mx-auto d-block" width="30" height="30" src="../static/images/loading.gif"/></span>
+            </ul>
+          </div>
+        </nav>
+
+        <main role="main" class="col-md-9 ml-sm-auto col-lg-10 mt-5  pt-3 px-4">
+          {% block body %}{% endblock %}
+      </main>
+      </div>
+      </div>
+
+
+
+
+
+  </body>
+</html>

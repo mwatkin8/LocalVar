@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% block body %}
+<div class="row">
+  <div class="col-md-8">
+    <h3 class="pb-3 mb-4 border-bottom">
+      GA4GH Variant Representation Specification (VRS)
+    </h3>
+    <div >
+      <h4 style="font-weight:normal">VRS Information Model</h4>
+      <p>
+          One of the main contributions of VRS is an information model which can be used to represent the components of an instance of variation.
+          The objects from the information model included in this tool suite are:
+          <ul>
+              <li><i>Sequence</i> - a string, constrained to contain only characters representing IUPAC nucleic acid or amino acid codes.</li>
+              <li><i>SimpleInterval</i> - a range on a Sequence with a single start and end coordinate, possibly with length zero, and specified using <a href="https://vr-spec.readthedocs.io/en/1.0/appendices/design_decisions.html#interbase-coordinates-design">Interbase Coordinates</a>.</li>
+              <li><i>SequenceLocation</i> - a contiguous segment of a biological sequence, defined with an Interval and a Sequence.</li>
+              <li><i>SequenceState</i> - a “ref-alt” style variation, including SNVs, MNVs, del, ins, and delins.</li>
+              <li><i>Allele</i> - a State found at a Location.</li>
+          </ul>
+          These models build upon one another to provide a fully scoped representation of the instance of variation. The following <a href="https://vr-spec.readthedocs.io/en/1.0/impl-guide/example.html">example</a> comes from the specification.
+          <br><br>
+          <img class="info-model" src="../static/images/info-model.png">
+          <br><br>
+          They are also used to generate computed identifiers (<i>shown below</i>).
+      </p>
+      <hr>
+      <h4 style="font-weight:normal">VRS Computed Identifiers</h4>
+      <p>The following description comes from the <a href="https://vr-spec.readthedocs.io/en/1.0/impl-guide/computed_identifiers.html">specification</a>.</p>
+      <blockquote>
+          <p style="padding-left:5px;">
+              VRS provides an algorithmic solution to deterministically generate a globally unique identifier from a VRS object itself. All valid implementations of the VRS Computed Identifier will generate the same identifier when the objects are identical, and will generate different identifiers when they are not. The <a href="https://vr-spec.readthedocs.io/en/1.0/impl-guide/computed_identifiers.html#truncated-digest-sha512t24u">VRS Computed Digest algorithm</a> obviates centralized registration services, allows computational pipelines to generate “private” ids efficiently, and makes it easier for distributed groups to share data.
+          </p>
+      </blockquote>
+      <p>Continuation of the <a href="https://vr-spec.readthedocs.io/en/1.0/impl-guide/example.html">example</a> from the specification.</p>
+      <img class="vr-digest-flow" src="../static/images/vr-digest-flow.png"/><br><br>
+      <p>These computed identifiers together serve as a globally unique way to represent an instance of variation. They can be used to reliably exchange relevant annotations and other associated variantion knowledge artifacts.</p>
+    </div><!-- /.blog-post -->
+  </div><!-- /.blog-main -->
+  <aside class="col-md-4">
+    <div class="p-3 mb-3 bg-light rounded">
+      <h4 style="font-weight:normal" class="font-italic">About</h4>
+      <p class="mb-0">The GA4GH Variation Representation Specification (<a href="https://vr-spec.readthedocs.io/en/1.0/index.html">VRS</a>) is an open specification to standardize the exchange of variation data</p>
+    </div>
+    <div class="p-3">
+      <h4 style="font-weight:normal">Links</h4>
+      <ol class="list-unstyled mb-0">
+          <li><a href="https://vrs.ga4gh.org/en/1.0/introduction.html">Introduction</a></li>
+        <li><a href="https://vrs.ga4gh.org/en/1.0/terms_and_model.html">Terminology & Information Model</a></li>
+        <li><a href="https://vrs.ga4gh.org/en/1.0/schema.html">Schema</a></li>
+        <li><a href="https://github.com/ga4gh/vrs">GitHub Repository</a></li>
+      </ol>
+    </div>
+  </aside><!-- /.blog-sidebar -->
+</div><!-- /.row -->
+<br /><br /><br /><br /><br /><br />
+<!-- Icons -->
+<script src="https://unpkg.com/feather-icons/dist/feather.min.js"></script>
+<script>
+  feather.replace()
+</script>
+{% endblock %}
