@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% block body %}
+<div id="modal" class="modal">
+     <!-- The modal content -->
+     <div class="modal-content text-center"><h4>Warning!</h4>
+         <div style="padding:50px;">
+             <h6>This will delete your existing collection and history</h6>
+       </div>
+       <div class="row">
+           <div class="col-md-6">
+               <a class="btn btn-outline-success btn-block" href="/delete">Confirm</a>
+            </div>
+            <div class="col-md-6">
+                <a class="btn btn-outline-danger btn-block" href="/">Cancel</a>
+            </div>
+         </div>
+     </div>
+</div>
+<script type="text/javascript">
+   modal("{{ warning }}")
+</script>
+<script type="text/javascript">
+   if('{{ alert }}' === 'true'){
+       alert('You must first upload a collection.')
+   }
+</script>
+
+<div class="pb-2 mb-3 border-bottom">
+    <h1 class="h2">Getting started...</h1>
+</div>
+<div class="form-group">
+    <form id="upload_form" action="/upload" method="post" enctype="multipart/form-data" onsubmit="return false">
+        <input  style="display:none" type="file" onchange="this.form.submit();" id="fileInput" accept=".csv" name="file" size="1" >
+        <label class="btn btn-primary btn-sm" for="fileInput">Select .csv file</label>
+        <label for="fileInput">{{ filename }}</label>
+    </form>
+    <span>The first column should contain unique identifiers</span>
+</div>
+
+<div class="form-group">
+    <form id="cols" action="/load" method="post" onsubmit="showGIF();return false;"></form>
+</div>
+<script type="text/javascript">
+   buildColSelect("{{ colnames }}")
+</script>
+
+{% endblock %}

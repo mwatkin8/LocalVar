@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% block body %}
+<div id="modal" class="modal">
+     <!-- The modal content -->
+     <div class="modal-content text-center"><h4>Tailor your suggestions</h4>
+         <div style="padding:50px;">
+             <h6>Should these interpretations be considered equivalent?</h6>
+       </div>
+       <div class="row">
+           <div class="col-md-6">
+               <a class="btn btn-outline-success btn-block" href="#">Yes</a>
+            </div>
+            <div class="col-md-6">
+                <button class="btn btn-outline-danger btn-block" onclick="suggestModal('false')">No</button>
+            </div>
+         </div>
+     </div>
+</div>
+
+<ul id="suggestion-tabs" class="nav nav-tabs">
+  <li id="update" class="nav-item">
+    <a class="nav-link active" href="/suggestions?type=update">Update Interpretation</a>
+  </li>
+  <li id="merge-dup" class="nav-item">
+    <a class="nav-link" href="/suggestions?type=merge-dup">Merge Duplicate</a>
+  </li>
+  <li id="merge-syn" class="nav-item">
+    <a class="nav-link" href="/suggestions?type=merge-syn">Merge Synonym</a>
+  </li>
+</ul>
+
+<div class="my-3 p-3 bg-white">
+    <h2 class="pb-2 mb-0 lead">Suggestions <span class="badge badge-secondary">{{ total }}</span></h2>
+    <div class="jumbotron mt-3 pt-3 mb-3 pb-3">
+        <p class="lead mb-1 pb-1"><i>{{ explanation }}</i></p>
+    </div>
+    {{ list|safe }}
+</div>
+
+{% endblock %}
