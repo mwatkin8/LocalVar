@@ -1,17 +1,43 @@
 {% extends 'base.html' %}
 {% block body %}
-<div id="modal" class="modal">
+<script>
+    showLoading();
+</script>
+<div id="no-modal" class="modal">
+     <!-- The modal content -->
+     <div class="modal-content text-center"><h4>Tailor your suggestions</h4>
+         <p id="ints" style="display:none"></p>
+         <div style="padding:50px;">
+             <h6>Should <i>all</i> instances of this interpretation conflict be considered equivalent?</h6>
+       </div>
+       <div class="row">
+           <div class="col-md-4">
+               <button class="btn btn-outline-success btn-block" onclick="tailorSuggestion()">Yes</button>
+            </div>
+            <div class="col-md-4">
+                <button class="btn btn-outline-primary btn-block" onclick="suggestModal('false','no-modal')">Just this one</button>
+            </div>
+            <div class="col-md-4">
+                <button class="btn btn-outline-danger btn-block" onclick="suggestModal('false','no-modal')">Cancel</button>
+            </div>
+         </div>
+     </div>
+</div>
+<div id="yes-modal" class="modal">
      <!-- The modal content -->
      <div class="modal-content text-center"><h4>Tailor your suggestions</h4>
          <div style="padding:50px;">
-             <h6>Should these interpretations be considered equivalent?</h6>
+             <h6>Do you want to update <i>all</i> instances of this interpretation conflict?</h6>
        </div>
        <div class="row">
-           <div class="col-md-6">
+           <div class="col-md-4">
                <a class="btn btn-outline-success btn-block" href="#">Yes</a>
             </div>
-            <div class="col-md-6">
-                <button class="btn btn-outline-danger btn-block" onclick="suggestModal('false')">No</button>
+            <div class="col-md-4">
+                <button class="btn btn-outline-primary btn-block" onclick="suggestModal('false','yes-modal')">Just this one</button>
+            </div>
+            <div class="col-md-4">
+                <button class="btn btn-outline-danger btn-block" onclick="suggestModal('false','yes-modal')">Cancel</button>
             </div>
          </div>
      </div>
@@ -36,5 +62,9 @@
     </div>
     {{ list|safe }}
 </div>
+
+<script>
+    hideLoading();
+</script>
 
 {% endblock %}

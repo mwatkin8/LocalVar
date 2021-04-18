@@ -1,0 +1,11 @@
+{
+    "Indeterminant": [
+        "Uncertain significance",
+        "Likely benign"
+    ],
+    "Yes": [
+        "Pathogenic",
+        "Pathogenic/Likely pathogenic",
+        "Likely pathogenic"
+    ]
+}

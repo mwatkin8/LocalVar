@@ -20,8 +20,9 @@
     <nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0">
       <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="#"><img src="../static/images/icon.png" width="25" height="25"/> LocalVar</a>
     </nav>
-    <div id="loading" class="loading"><span class="loading_text pl-5">Initializing...</span><span class="loading_sub pl-5">This can take longer for large collections</span></div>
-    <div id="non-loading" class="container-fluid">
+    <div id="initializing" class="initializing"><span class="initializing_text pl-5">Initializing...</span><span class="initializing_sub pl-5">This can take longer for large collections</span></div>
+    <div id="loading" class="loading"></div>
+    <div id="non" class="container-fluid">
       <div class="row">
         <nav class="col-md-2 d-none d-md-block bg-light sidebar">
           <div class="sidebar-fixed">
@@ -35,7 +36,7 @@
               <li id="viewer" class="nav-item">
                 <a class="nav-link active" href="/">
                   <img class="pb-1"src="../static/icons/list.svg"></img>
-                  View Collection
+                  View Collection <span id="table-load" style="float:right;"><img class="mx-auto d-block" width="20" height="20" src="../static/images/loading.gif"/></span>
                 </a>
               </li>
               <li id="suggestions" class="nav-item">
@@ -87,7 +88,6 @@
                 </a>
               </li>
               <br />
-              <span id="table-load"><img class="mx-auto d-block" width="30" height="30" src="../static/images/loading.gif"/></span>
             </ul>
           </div>
         </nav>

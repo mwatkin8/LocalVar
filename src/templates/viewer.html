@@ -14,15 +14,24 @@
     </div>
     <div id="add-row" style="display:none;padding-left:20px;padding-right:20px" class="row">
         <hr />
+        <form id="new-entry-form" action="/new" method="post" onsubmit="showLoading();return false;">
         <div class="row">
-              <div class="col-md-12" style="padding-top:5px;">
-                  <button style="float:right;" class="btn btn-danger" onclick="closeEntry()"><img src="../static/icons/x.svg"></img></button>
-                  <form action="" method="post">
-                      <textarea style="width:90%" class="form-control" name="name" rows="4" cols="80"></textarea>
-                      <span class="form-text text-muted">Paste a comma-delimited new entry. Multiple entries must be on separate lines. The "VRS" column value will be added automatically.</span>
-                  </form>
-              </div>
+          <div class="col-md-11" style="padding-top:5px;">
+              <textarea style="width:100%" class="form-control" name="new-entry" rows="4" cols="80"></textarea>
+              <span class="form-text text-muted">Paste a comma-delimited new entry. Multiple entries must be on separate lines. The "ID" and "VRS" column values will be added automatically.</span>
+          </div>
+          <div class="col-md-1">
+              <button id="submit-button" class="btn btn-success mt-1" onclick="closeEntry()"><img src="../static/icons/check.svg"></img></button><br />
+              <button type="button" class="btn btn-danger mt-2" onclick="closeEntry()"><img src="../static/icons/x.svg"></img></button>
+          </div>
+        <script>
+            let form = document.getElementById("new-entry-form");
+            document.getElementById("submit-button").addEventListener("click", function () {
+                form.submit();
+            })
+        </script>
         </div>
+        </form>
         <hr />
     </div>
     <script>

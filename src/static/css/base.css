@@ -91,6 +91,15 @@ pre {
 
 .loading{
     display: none;
+    background: url('/static/images/load.gif') no-repeat center center;
+    background-size: 400px;
+    position: absolute;
+    height: 100%;
+    width: 100%;
+}
+
+.initializing{
+    display: none;
     background: url('/static/images/tetris.gif') no-repeat center center;
     background-size: 400px;
     position: absolute;
@@ -98,7 +107,7 @@ pre {
     width: 100%;
 }
 
-.loading_text{
+.initializing_text{
     left: 42%;
     line-height: 200px;
     margin: auto;
@@ -109,7 +118,7 @@ pre {
     font-size: 40px;
     color: gray;
 }
-.loading_sub{
+.initializing_sub{
     left: 32%;
     line-height: 100px;
     margin: auto;

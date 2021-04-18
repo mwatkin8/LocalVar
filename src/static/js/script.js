@@ -1,7 +1,54 @@
+function tailorSuggestion(){
+    let ints = document.getElementById('ints');
+    let form = document.createElement('form');
+    document.body.appendChild(form);
+    form.method = 'post';
+    form.action = '/tailor';
+    let input = document.createElement('input');
+    input.type = 'hidden';
+    input.name = 'ints';
+    input.value = ints.innerText;
+    form.appendChild(input);
+    form.submit();
+}
+
+
 function merge(hgvs,id,col){
     let td = document.getElementById(id)
     let table = document.getElementById(hgvs);
     table.children[0].children[0].children[parseInt(col)].innerHTML = "<div style=\"text-align: center;\">" + td.children[1].innerHTML + "</div>"
+}
+
+function newEdit(){
+    document.getElementById("save-edit").style.display = 'inline';
+    document.getElementById("cancel-edit").style.display = 'inline';
+}
+
+function saveEdit(id){
+    showLoading();
+    let row = '';
+    document.getElementById(id).childNodes.forEach((item, i) => {
+        inner = item.innerHTML;
+        if(inner){
+            if(inner.includes('div')){
+                row += inner.split('>')[1].split('<')[0] + ','
+            }
+            else{
+                row += inner + ','
+            }
+        }
+    });
+    row = row.slice(0,-1)
+    let form = document.createElement('form');
+    document.body.appendChild(form);
+    form.method = 'post';
+    form.action = '/save';
+    let input = document.createElement('input');
+    input.type = 'hidden';
+    input.name = 'row';
+    input.value = row;
+    form.appendChild(input);
+    form.submit();
 }
 
 function select(id){
@@ -15,6 +62,7 @@ function back(){
 function newEntry(){
     document.getElementById('add-row').style.display = 'block'
 }
+
 function closeEntry(){
     document.getElementById('add-row').style.display = 'none'
 }
@@ -25,21 +73,36 @@ function modal(warning){
     }
 }
 
-function suggestModal(show){
+function suggestModal(show,type,ints){
     if (show === 'true'){
-        document.getElementById('modal').style.display = 'block';
+        document.getElementById('ints').innerText = ints;
+        document.getElementById(type).style.display = 'block';
     }
     else{
-        document.getElementById('modal').style.display = 'none';
+        document.getElementById(type).style.display = 'none';
     }
 
 }
 
-function showGIF(){
-    let non = document.getElementById('non-loading');
+function showInitializing(){
+    let non = document.getElementById('non');
+    non.style.opacity = "0.1";
+    let loading = document.getElementById("initializing");
+    loading.style.display = "block";
+}
+
+function showLoading(){
+    let non = document.getElementById('non');
     non.style.opacity = "0.1";
     let loading = document.getElementById("loading");
     loading.style.display = "block";
+}
+
+function hideLoading(){
+    let non = document.getElementById('non');
+    non.style.opacity = "1";
+    let loading = document.getElementById("loading");
+    loading.style.display = "none";
 }
 
 function highlight(selected){
@@ -80,6 +143,7 @@ function highlight(selected){
             items[i].childNodes[1].classList.add('active');
         }
     }
+    //hideLoading()
 }
 
 function buildColSelect(colnames){

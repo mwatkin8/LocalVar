@@ -2,7 +2,7 @@
 {% block body %}
 <div class="pb-2 mb-3 border-bottom ">
     <button class="btn btn-primary" onclick="back()"><img src="../static/icons/chevrons-left.svg"> Back</button>
-    <h4 class="mt-2"style="float:right">{{ id }}</h4>
+    <button style="float:right;display:inline" class="btn btn-sm btn-danger mt-1 ml-2"><img src="../static/icons/x.svg"></button><h4 class="mt-2"style="float:right">{{ id }} </h4>
 </div>
 
 <div>
@@ -13,16 +13,24 @@
             </tr>
         </thead>
         <tbody>
-            <tr>
-                {{ row|safe }}
-            </tr>
+            {{ row|safe }}
         </tbody>
     </table>
+    <script>
+        let cells = document.getElementsByClassName("edit-cells");
+        for (let i = 0; i < cells.length; i++) {
+            cells[i].addEventListener("input", function() {
+                newEdit();
+            });
+        }
+    </script>
     <div style="height:100vh" class="row mt-0 mr-0 pr-0">
         <div class="col-md-9 mt-2">
             <div class="row">
                 <div class="col-md-12">
-                    <h6>Click on a cell value to edit <img class="pb-1"src="../static/icons/edit-3.svg"></h6>
+                    <h6 style="display:inline">Click on a cell value to edit <img class="pb-1"src="../static/icons/edit-3.svg"></h6>
+                    <button id="save-edit" style="display:none" class="ml-3 btn btn-sm btn-success" onclick="saveEdit('{{ id }}')">Save</button>
+                    <button id="cancel-edit" style="display:none" class="btn btn-sm btn-danger" onclick="select('{{ id }}')">Cancel</button>
                 </div>
             </div>
             <div class="row mt-3">
@@ -38,7 +46,7 @@
                             <h5 class="text-muted" style="font-weight:normal"> {{ cv_int }}</h5>
                         </div>
                         <div class="col-md-2 mt-3">
-                            <a href="{{ evidence }}" class="btn btn-outline-primary">Evidence <span data-feather="external-link"></span></a>
+                            <a href="{{ evidence }}" class="btn btn-primary">Evidence <img class="pb-1"src="../static/icons/external-link.svg"></a>
                         </div>
                     </div>
                     <div class="row">
@@ -67,5 +75,4 @@
     </div>
 
 </div>
-
 {% endblock %}
