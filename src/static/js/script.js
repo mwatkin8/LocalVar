@@ -1,22 +1,195 @@
-function tailorSuggestion(){
-    let ints = document.getElementById('ints');
+function tailorSuggestion(type){
     let form = document.createElement('form');
     document.body.appendChild(form);
     form.method = 'post';
-    form.action = '/tailor';
     let input = document.createElement('input');
     input.type = 'hidden';
+    let ints = document.getElementById('ints');
     input.name = 'ints';
     input.value = ints.innerText;
+    if (type === 'remove'){
+        form.action = '/tailor?type=remove';
+    }
+    else{
+        let input2 = document.createElement('input');
+        input2.type = 'hidden';
+        let hgvs = document.getElementById('hgvs');
+        input2.name = 'hgvs';
+        input2.value = hgvs.innerText;
+        form.action = '/tailor?type=update';
+        form.appendChild(input2);
+    }
     form.appendChild(input);
     form.submit();
 }
 
+function restore(id){
+    window.location.replace("/empty?type=restore&id=" + id)
+}
+function permanent(){
+    let id = document.getElementById('entry-id');
+    window.location.replace("/empty?type=permanent&id=" + id.innerText)
+}
+function deleteRecord(id){
+    window.location.replace("/trash?id=" + id)
+}
+
+function mergeDupModal(visible,hgvs,ids){
+    if (visible === 'show'){
+        let tr = document.getElementById(hgvs);
+        cancel = false
+        row = ''
+        for(let i = 0; i < tr.children.length; i++){
+            if(tr.children[i].children[0].innerHTML === ''){
+                cancel = true
+                alert('All fields must have a value in order to merge.')
+                break
+            }
+            else{
+                row += tr.children[i].children[0].innerHTML + ','
+            }
+        }
+        if (!cancel){
+            document.getElementById('merge-dup-modal').style.display = 'block';
+            row = row.replaceAll('&gt;','>')
+            row = row.replaceAll('&lt;','<')
+            row = row.slice(0,-1)
+            let form = document.createElement('form');
+            form.method = 'post';
+            form.action = '/dup-merge';
+            document.body.appendChild(form);
+            let input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = 'update';
+            input.value = row;
+            form.appendChild(input);
+            let trash_ids = document.createElement('input');
+            trash_ids.type = 'hidden';
+            trash_ids.name = 'trash';
+            let id = tr.children[0].children[0].innerHTML;
+            let id_list = ids.split(',');
+            for (let i = 0; i < id_list.length; i++){
+                if (id_list[i] === id){
+                    id_list.splice(i, 1);
+                    document.getElementById('dup-updated-id').innerHTML = id
+                }
+            }
+            document.getElementById('dup-removed-id').innerHTML = id_list.join()
+            trash_ids.value = id_list.join();
+            form.appendChild(trash_ids);
+            let button = document.getElementById('dup-confirm');
+            button.onclick = function(){
+                form.submit()
+            }
+        }
+    }
+    else{
+        document.getElementById('merge-dup-modal').style.display = 'none';
+    }
+}
+
+function removeDupMerge(hgvs){
+    let form = document.createElement('form');
+    form.method = 'post';
+    form.action = '/remove-dup-merge';
+    document.body.appendChild(form);
+    let input = document.createElement('input');
+    input.type = 'hidden';
+    input.name = 'hgvs';
+    input.value = hgvs;
+    form.appendChild(input);
+    form.submit()
+}
+
+function mergeSynModal(visible,name,ids){
+    if (visible === 'show'){
+        let tr = document.getElementById(name);
+        cancel = false
+        row = ''
+        for(let i = 0; i < tr.children.length; i++){
+            if(tr.children[i].children[0].innerHTML === ''){
+                cancel = true
+                alert('All fields must have a value in order to merge.')
+                break
+            }
+            else{
+                row += tr.children[i].children[0].innerHTML + ','
+            }
+        }
+        if (!cancel){
+            document.getElementById('merge-syn-modal').style.display = 'block';
+            row = row.replaceAll('&gt;','>')
+            row = row.replaceAll('&lt;','<')
+            row = row.slice(0,-1)
+            let form = document.createElement('form');
+            form.method = 'post';
+            form.action = '/syn-merge';
+            document.body.appendChild(form);
+            let input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = 'update';
+            input.value = row;
+            form.appendChild(input);
+            let trash_ids = document.createElement('input');
+            trash_ids.type = 'hidden';
+            trash_ids.name = 'trash';
+            let id = tr.children[0].children[0].innerHTML;
+            let id_list = ids.split(',');
+            for (let i = 0; i < id_list.length; i++){
+                if (id_list[i] === id){
+                    id_list.splice(i, 1);
+                    document.getElementById('syn-updated-id').innerHTML = id
+                }
+            }
+            document.getElementById('syn-removed-id').innerHTML = id_list.join()
+            trash_ids.value = id_list.join();
+            form.appendChild(trash_ids);
+            let button = document.getElementById('syn-confirm');
+            button.onclick = function(){
+                form.submit()
+            }
+        }
+    }
+    else{
+        document.getElementById('merge-syn-modal').style.display = 'none';
+    }
+}
+
+function singleSuggestion(type){
+    let form = document.createElement('form');
+    document.body.appendChild(form);
+    form.method = 'post';
+    let input = document.createElement('input');
+    input.type = 'hidden';
+    if(type === 'remove'){input.type = 'hidden';
+        let id = document.getElementById('entry-id');
+        input.name = 'entry-id';
+        input.value = id.innerText;
+        form.action = '/remove-suggestion';
+    }
+    else{
+        let hgvs = document.getElementById('hgvs');
+        input.name = 'hgvs';
+        input.value = hgvs.innerText;
+        form.action = '/accept-suggestion';
+    }
+    form.appendChild(input);
+    form.submit();
+}
 
 function merge(hgvs,id,col){
     let td = document.getElementById(id)
-    let table = document.getElementById(hgvs);
-    table.children[0].children[0].children[parseInt(col)].innerHTML = "<div style=\"text-align: center;\">" + td.children[1].innerHTML + "</div>"
+    let tr = document.getElementById(hgvs);
+    tr.children[parseInt(col)].innerHTML = "<div style=\"text-align: center;\">" + td.children[1].innerHTML + "</div>"
+}
+
+function mergeSyn(unique,id,col,vrs,ncol){
+    let td = document.getElementById(id)
+    let tr = document.getElementById(unique);
+    tr.children[parseInt(col)].innerHTML = "<div style=\"text-align: center;\">" + td.children[1].innerHTML + "</div>"
+    if (vrs !== ''){
+        tr.children[parseInt(ncol) - 1].innerHTML = "<div style=\"text-align: center;\">" + vrs + "</div>"
+    }
 }
 
 function newEdit(){
@@ -31,7 +204,15 @@ function saveEdit(id){
         inner = item.innerHTML;
         if(inner){
             if(inner.includes('div')){
-                row += inner.split('>')[1].split('<')[0] + ','
+                let div_content = inner.split('contenteditable="">')[1].split('</div')[0] + ',';
+                //Pasted edits
+                if(div_content.includes('pre')){
+                    row += div_content.split('>')[1].split('<')[0] + ',';
+                }
+                //Manually-typed edits
+                else{
+                    row += div_content
+                }
             }
             else{
                 row += inner + ','
@@ -73,9 +254,21 @@ function modal(warning){
     }
 }
 
-function suggestModal(show,type,ints){
+function trashModal(show,id){
+    if (show === 'true'){
+        document.getElementById('entry-id').innerText = id;
+        document.getElementById('trash-modal').style.display = 'block';
+    }
+    else{
+        document.getElementById('trash-modal').style.display = 'none';
+    }
+}
+
+function suggestModal(show,type,ints,id,hgvs){
     if (show === 'true'){
         document.getElementById('ints').innerText = ints;
+        document.getElementById('entry-id').innerText = id;
+        document.getElementById('hgvs').innerText = hgvs;
         document.getElementById(type).style.display = 'block';
     }
     else{
