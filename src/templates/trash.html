@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block body %}
+<p id="entry-id" style="display:none"></p>
+<div id="trash-modal" class="modal">
+     <!-- The modal content -->
+     <div class="modal-content text-center"><h4>Are you sure?</h4>
+         <div style="padding:50px;">
+             <h6>Deleted records cannot be recovered</h6>
+       </div>
+       <div class="row">
+           <div class="col-md-6">
+               <button class="btn btn-outline-success btn-block" onclick="permanent()">Yes</button>
+            </div>
+            <div class="col-md-6">
+                <button class="btn btn-outline-danger btn-block" onclick="trashModal('hide')">Cancel</button>
+            </div>
+         </div>
+     </div>
+</div>
+<div class="my-3 p-3 bg-white">
+    <h2 class="pb-2 mb-0 lead">Trash <span class="badge badge-secondary">{{ total }}</span></h2>
+    <div class="jumbotron mt-3 pt-3 mb-3 pb-3">
+        <p class="lead mb-1 pb-1"><i>You may choose to restore an entry to the collection, delete it forever, or simply leave it here. Nothing will be automatically deleted.</i></p>
+    </div>
+    {{ table|safe }}
+</div>
+
+{% endblock %}

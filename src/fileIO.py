@@ -1,6 +1,7 @@
 import os,json
 from os import listdir
 from os.path import isfile,join
+from recordCRUD import Header, Record
 
 def getFileName(type):
     onlyfiles = [f for f in listdir('static/' + type) if isfile(join('static/' + type, f))]
@@ -8,7 +9,6 @@ def getFileName(type):
 
 def checkEmpty():
     onlyfiles = [f for f in listdir('static/uploads') if isfile(join('static/uploads', f))]
-    print(onlyfiles)
     if onlyfiles == []:
         return True
     else:
@@ -64,18 +64,15 @@ SNAPSHOT - .csv file of the collection
 def writeSnapshot():
     content = ''
     #First, open the content map
-    map = {}
-    onlyfiles = [f for f in listdir('static/collection-map') if isfile(join('static/collection-map', f))]
-    with open('static/collection-map/' + onlyfiles[0], 'r') as json_file:
-        map = json.load(json_file)
+    collection_map = readCollectionMap()
     #Read the map and create the snapshot
     onlyfiles = [f for f in listdir('static/snapshot') if isfile(join('static/snapshot', f))]
     with open('static/snapshot/' + onlyfiles[0], 'w') as update:
-        content = ','.join(map['HEADER']) + '\n'
+        content = ','.join(collection_map['HEADER'].fields) + '\n'
         #Ignore custom fields added to the map
-        for key in map:
-            if key != 'HEADER' and key != 'HGVS-COL' and key != 'INT-COL':
-                content += ','.join(map[key]) + '\n'
+        for id in collection_map:
+            if id != 'HEADER':
+                content += ','.join(collection_map[id].fields) + '\n'
         update.write(content)
     return content
 
@@ -90,16 +87,27 @@ COLLECTION MAP - json object of the collection
 }
 """
 def readCollectionMap():
-    map = {}
+    content = []
+    collection_map = {}
     onlyfiles = [f for f in listdir('static/collection-map') if isfile(join('static/collection-map', f))]
     with open('static/collection-map/' + onlyfiles[0], 'r') as json_file:
-        map = json.load(json_file)
-    return map
+        content = json.load(json_file)
+    for i in range(0,len(content)):
+        if i == 0:
+            header = Header(content[i]["fields"],content[i]["int_col"],content[i]["hgvs_col"])
+            collection_map["HEADER"] = header
+        else:
+            record = Record(content[i]["fields"],content[i]["id"],content[i]["int"],content[i]["hgvs"],content[i]["vrs"])
+            collection_map[record.id] = record
+    return collection_map
 
-def writeCollectionMap(map):
+def writeCollectionMap(collection_map):
+    content = []
+    for id in collection_map:
+        content.append(collection_map[id].export())
     onlyfiles = [f for f in listdir('static/collection-map') if isfile(join('static/collection-map', f))]
     with open('static/collection-map/' + onlyfiles[0], 'w') as update:
-        update.write(json.dumps(map,indent=4))
+        update.write(json.dumps(content))
 
 """
 BINS - json object of the HGVS bins
@@ -195,16 +203,16 @@ SUGGESTION MAP - json object of suggestion preferences
 }
 """
 def readSuggestionMap():
-    map = {}
+    suggestion_map = {}
     onlyfiles = [f for f in listdir('static/suggestion-map') if isfile(join('static/suggestion-map', f))]
     with open('static/suggestion-map/' + onlyfiles[0], 'r') as json_file:
-        map = json.load(json_file)
-    return map
+        suggestion_map = json.load(json_file)
+    return suggestion_map
 
-def writeSuggestionMap(map):
+def writeSuggestionMap(suggestion_map):
     onlyfiles = [f for f in listdir('static/suggestion-map') if isfile(join('static/suggestion-map', f))]
     with open('static/suggestion-map/' + onlyfiles[0], 'w') as update:
-        update.write(json.dumps(map,indent=4))
+        update.write(json.dumps(suggestion_map,indent=4))
 
 """
 TRASH - json object of records removed from collection
@@ -230,13 +238,33 @@ TRASH - json object of records removed from collection
 }
 """
 def readTrash():
-    trash = {}
+    content,trash = {},{}
     onlyfiles = [f for f in listdir('static/trash') if isfile(join('static/trash', f))]
     with open('static/trash/' + onlyfiles[0], 'r') as json_file:
-        trash = json.load(json_file)
+        content = json.load(json_file)
+    for id in content:
+        if id == 'HEADER':
+            header = Header(content["HEADER"]["fields"],content["HEADER"]["int_col"],content["HEADER"]["hgvs_col"])
+            trash["HEADER"] = header
+        else:
+            r = content[id]["record"]
+            record = Record(r["fields"],id,r["int"],r["hgvs"],r["vrs"])
+            trash[record.id] = {
+                "record":record,
+                "bin": content[id]["bin"]
+            }
     return trash
 
 def writeTrash(trash):
+    content = {}
+    for id in trash:
+        if id == 'HEADER':
+            content[id] = trash["HEADER"].export()
+        else:
+            content[id] = {
+                "record": trash[id]["record"].export(),
+                "bin": trash[id]["bin"]
+            }
     onlyfiles = [f for f in listdir('static/trash') if isfile(join('static/trash', f))]
     with open('static/trash/' + onlyfiles[0], 'w') as update:
-        update.write(json.dumps(trash,indent=4))
+        update.write(json.dumps(content,indent=4))
