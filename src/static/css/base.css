@@ -43,8 +43,8 @@ pre {
     width: 30%;
 }
 
-.trow:hover{
-    background-color: rgb(67, 138, 199, 0.2) !important;
+#data-table tr:hover td:not(:first-child){
+    background-color: rgb(173, 216, 230, 0.3) !important;
 }
 
 .feather {
@@ -72,6 +72,29 @@ pre {
   padding: 20px;
   border: 1px solid #888;
   width: 600px; /* Could be more or less, depending on screen size */
+}
+
+/* The Modal (background) */
+.merge-modal {
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+/* Modal Content/Box */
+.merge-modal-content {
+  background-color: #fefefe;
+  margin-top: 5%;
+  margin-left: 2%;
+  padding: 20px;
+  overflow: auto; /* Enable scroll if needed */
+  border: 1px solid #888;
+  max-height: 80%;
+  width: 78%; /* Could be more or less, depending on screen size */
 }
 
 /* The Close Button */

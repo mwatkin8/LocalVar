@@ -3,23 +3,59 @@
 <script>
     showLoading();
 </script>
+<p id="ints" style="display:none"></p>
+<p id="entry-id" style="display:none"></p>
+<p id="hgvs" style="display:none"></p>
 <div id="no-modal" class="modal">
      <!-- The modal content -->
      <div class="modal-content text-center"><h4>Tailor your suggestions</h4>
-         <p id="ints" style="display:none"></p>
          <div style="padding:50px;">
-             <h6>Should <i>all</i> instances of this interpretation conflict be considered equivalent?</h6>
+             <h6>Should <i>all</i> suggestions with this interpretation conflict be removed?</h6>
        </div>
        <div class="row">
            <div class="col-md-4">
-               <button class="btn btn-outline-success btn-block" onclick="tailorSuggestion()">Yes</button>
+               <button class="btn btn-outline-success btn-block" onclick="tailorSuggestion('remove')">Yes</button>
             </div>
             <div class="col-md-4">
-                <button class="btn btn-outline-primary btn-block" onclick="suggestModal('false','no-modal')">Just this one</button>
+                <button class="btn btn-outline-primary btn-block" onclick="singleSuggestion('remove')">Just this one</button>
             </div>
             <div class="col-md-4">
                 <button class="btn btn-outline-danger btn-block" onclick="suggestModal('false','no-modal')">Cancel</button>
             </div>
+         </div>
+     </div>
+</div>
+<div id="merge-dup-modal" class="modal">
+     <!-- The modal content -->
+     <div class="modal-content text-center"><h4>Are you sure?</h4>
+         <div style="padding:50px;">
+             <h6>Record <i id="dup-updated-id"></i> will be updated</h6>
+             <h6>Record <i id="dup-removed-id"></i> will be moved to the trash</h6>
+       </div>
+       <div class="row">
+           <div class="col-md-6">
+               <button id="dup-confirm" class="btn btn-outline-success btn-block">Confirm</button>
+            </div>
+            <div class="col-md-6">
+                <button onclick="mergeDupModal('hide','',[])"class="btn btn-outline-danger btn-block">Cancel</button>
+             </div>
+         </div>
+     </div>
+</div>
+<div id="merge-syn-modal" class="modal">
+     <!-- The modal content -->
+     <div class="modal-content text-center"><h4>Are you sure?</h4>
+         <div style="padding:50px;">
+             <h6>Record <i id="syn-updated-id"></i> will be updated</h6>
+             <h6>Record <i id="syn-removed-id"></i> will be moved to the trash</h6>
+       </div>
+       <div class="row">
+           <div class="col-md-6">
+               <button id="syn-confirm" class="btn btn-outline-success btn-block">Confirm</button>
+            </div>
+            <div class="col-md-6">
+                <button onclick="mergeSynModal('hide','',[])"class="btn btn-outline-danger btn-block">Cancel</button>
+             </div>
          </div>
      </div>
 </div>
@@ -31,10 +67,10 @@
        </div>
        <div class="row">
            <div class="col-md-4">
-               <a class="btn btn-outline-success btn-block" href="#">Yes</a>
+               <button class="btn btn-outline-success btn-block" onclick="tailorSuggestion('update')">Yes</button>
             </div>
             <div class="col-md-4">
-                <button class="btn btn-outline-primary btn-block" onclick="suggestModal('false','yes-modal')">Just this one</button>
+                <button class="btn btn-outline-primary btn-block" onclick="singleSuggestion('update')">Just this one</button>
             </div>
             <div class="col-md-4">
                 <button class="btn btn-outline-danger btn-block" onclick="suggestModal('false','yes-modal')">Cancel</button>
@@ -43,7 +79,7 @@
      </div>
 </div>
 
-<ul id="suggestion-tabs" class="nav nav-tabs">
+<ul id="suggestion-tabs" class="nav nav-tabs pt-3 pl-3 pr-3">
   <li id="update" class="nav-item">
     <a class="nav-link active" href="/suggestions?type=update">Update Interpretation</a>
   </li>

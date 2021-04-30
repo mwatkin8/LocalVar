@@ -1,3 +1,50 @@
+function checkClicks(){
+    let checks = document.getElementsByClassName('checks');
+    let count = 0;
+    for(let i=0; i<checks.length; i++){
+        if(checks[i].checked === true){
+            count += 1
+            document.getElementById('trash-button').style.display = 'block'
+        }
+        if(count > 1){
+            document.getElementById('merge-button').style.display = 'block'
+            break
+        }
+    }
+    if(count === 1){
+        document.getElementById('merge-button').style.display = 'none'
+    }
+    if(count === 0){
+        document.getElementById('trash-button').style.display = 'none'
+    }
+}
+
+function checkBoxTrash(){
+    let checks = document.getElementsByClassName('checks');
+    let ids = [];
+    for(let i=0; i<checks.length; i++){
+        if(checks[i].checked === true){
+            ids.push(checks[i].value)
+        }
+    }
+    deleteRecord(ids.join(','))
+}
+
+function checkBoxMerge(){
+    let checks = document.getElementsByClassName('checks');
+    let ids = [];
+    for(let i=0; i<checks.length; i++){
+        if(checks[i].checked === true){
+            ids.push(checks[i].value)
+        }
+    }
+    window.location.replace("/manual-merge?ids=" + ids.join(','))
+}
+
+function hideManMerge(){
+    window.location.replace("/")
+}
+
 function tailorSuggestion(type){
     let form = document.createElement('form');
     document.body.appendChild(form);
@@ -101,6 +148,19 @@ function removeDupMerge(hgvs){
     form.submit()
 }
 
+function removeSynMerge(unique){
+    let form = document.createElement('form');
+    form.method = 'post';
+    form.action = '/remove-syn-merge';
+    document.body.appendChild(form);
+    let input = document.createElement('input');
+    input.type = 'hidden';
+    input.name = 'unique';
+    input.value = unique;
+    form.appendChild(input);
+    form.submit()
+}
+
 function mergeSynModal(visible,name,ids){
     if (visible === 'show'){
         let tr = document.getElementById(name);
@@ -147,6 +207,7 @@ function mergeSynModal(visible,name,ids){
             let button = document.getElementById('syn-confirm');
             button.onclick = function(){
                 form.submit()
+                showLoading();
             }
         }
     }

@@ -79,7 +79,7 @@ def makeHeader(hgvs_name,int_name,fields):
 
 def makeRecord(header,fields):
     try:
-        vrs = "test"#generateVRS(fields[header.hgvs_col])
+        vrs = generateVRS(fields[header.hgvs_col])
     except:
         vrs = "Not currently supported by VRS"
     fields.append(vrs)
@@ -181,7 +181,7 @@ def addRecord(new_content):
     fileIO.writeSnapshot()
     fileIO.writeBins(bins)
 
-def editRecord(fields):
+def editRecord(type,fields):
     #Load the content map, bins, and snapshot file
     collection_map = fileIO.readCollectionMap()
     bins = fileIO.readBins()
@@ -198,15 +198,39 @@ def editRecord(fields):
             #If there is a field difference in the new entry, save in the history and update the record
             if record.fields[i] != fields[i]:
                 col_name = header.fields[i]
-                history["entries"][id]["edits"].append({
-                    "manual edit": "(" + col_name + ") \"" + record.fields[i] + "\" to \"" + fields[i] + "\"",
-                    "timestamp": timestamp()
-                })
+                if type == 'manual':
+                    history["entries"][id]["edits"].append({
+                        "manual edit": "(" + col_name + ") \"" + record.fields[i] + "\" to \"" + fields[i] + "\"",
+                        "timestamp": timestamp()
+                    })
+                if type == 'dup':
+                    history["entries"][id]["edits"].append({
+                        "update from merge": "(" + col_name + ") \"" + record.fields[i] + "\" to \"" +  fields[i] + "\"",
+                        "timestamp": timestamp()
+                    })
+                if type == 'syn':
+                    history["entries"][id]["edits"].append({
+                        "update from merge": "(" + col_name + ") \"" + record.fields[i] + "\" to \"" +  fields[i] + "\"",
+                        "timestamp": timestamp()
+                    })
                 hgvs = fields[header.hgvs_col]
                 int = fields[header.int_col]
                 #Interpretation change
                 if i == header.int_col:
                     record.int = int
+                    if hgvs in bins:
+                        bins[hgvs]["Duplicates"].append({
+                            "ID": record.id,
+                            "Interpretation": record.int
+                        })
+                    else:
+                        enhanced = enhanceBins({
+                            "ID": record.id,
+                            "Interpretation": record.int,
+                            "Duplicates":[]
+                        })
+                        bins[hgvs] = enhanced
+                    fileIO.writeBins(bins)
                     bins[hgvs]["Interpretation"] = int
                 #HGVS change
                 if i == header.hgvs_col:

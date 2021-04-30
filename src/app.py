@@ -15,7 +15,7 @@ def baseView():
     else:
         table = buildTable()
         bins = fileIO.readBins()
-        return render_template('viewer.html', selected='viewer', table=table, bins=bins, hgvs_array=[*bins])
+        return render_template('viewer.html', mergeTable='', display='none', selected='viewer', table=table, bins=bins, hgvs_array=[*bins])
 
 @app.route('/new-collection')
 def new():
@@ -65,7 +65,7 @@ def saveEdit():
     row = row.replace('&gt;','>')
     fields = row.split(',')
     id = fields[0]
-    recordCRUD.editRecord(fields)
+    recordCRUD.editRecord('manual',fields)
     return redirect("/detail?id=" + id)
 
 @app.route('/detail')
@@ -79,6 +79,14 @@ def detailView():
     cv_int,synonyms,evidence = detail.compileClinVarInfo(record)
     return render_template('detail.html', selected='viewer', evidence=evidence, cv_int=cv_int, synonyms=synonyms, hgvs=record.hgvs, int=record.int, id=record.id, header=th, row=tr, edits=edits)
 
+@app.route('/manual-merge')
+def manualMerge():
+    ids = request.args.get('ids')
+    mergeTable = suggestions.manualMerge(ids)
+    table = buildTable()
+    bins = fileIO.readBins()
+    return render_template('viewer.html', mergeTable=mergeTable, display='block', selected='viewer', table=table, bins=bins, hgvs_array=[*bins])
+
 @app.route('/trash')
 def trashView():
     if fileIO.checkEmpty():
@@ -86,7 +94,12 @@ def trashView():
     else:
         id = request.args.get('id')
         if id:
-            trash.moveToTrash(id)
+            if ',' in id:
+                id_list = id.split(',')
+                for i in id_list:
+                    trash.moveToTrash(i)
+            else:
+                trash.moveToTrash(id)
         table,total = trash.buildTrash()
         return render_template('trash.html', selected='trash', table=table, total=total)
 
@@ -171,82 +184,49 @@ def removeDupMerge():
     fileIO.writeSuggestionMap(suggestion_map)
     return redirect("/suggestions?type=merge-dup")
 
+@app.route('/remove-syn-merge', methods=['POST'])
+def removeSynMerge():
+    unique = request.form.get('unique')
+    suggestion_map = fileIO.readSuggestionMap()
+    suggestion_map['SYN'].append(unique)
+    fileIO.writeSuggestionMap(suggestion_map)
+    return redirect("/suggestions?type=merge-syn")
+
 @app.route('/dup-merge', methods=['POST'])
 def dupMerge():
     row = request.form.get('update')
     trash_ids = request.form.get('trash')
-    id = suggestions.dupMergeEvent(row,trash_ids)
+    id = suggestions.mergeEvent('dup',row,trash_ids)
     return redirect("/detail?id=" + id)
 
 @app.route('/syn-merge', methods=['POST'])
 def synMerge():
     row = request.form.get('update')
-    trash = request.form.get('trash')
-    ids = trash.split(',')
-    for id in ids:
-        moveToTrash(id)
-    collection_map = fileIO.readCollectionMap()
-    history = fileIO.readHistory()
-    bins = fileIO.readBins()
-    row = row.replace('&lt;','<')
-    row = row.replace('&gt;','>')
-    ll = row.split(',')
-    id = ll[0]
-    for i in range(0,len(ll)):
-        if i == 0 or i == len(ll)-1:
-            continue
-        else:
-            if collection_map[id][i] != ll[i]:
-                col = collection_map['HEADER'][i]
-                history["entries"][id]["edits"].append({
-                    "update from synonym merge": "(" + col + ") \"" + collection_map[id][i] + "\" to \"" + ll[i] + "\"",
-                    "timestamp": timestamp()
-                })
-                hgvs = ll[collection_map['HGVS-COL']]
-                int = ll[collection_map['INT-COL']]
-                if i == collection_map['INT-COL']: #interpretation change
-                    bins[hgvs]["Interpretation"] = int
-                    fileIO.writeBins(bins)
-                if i == collection_map['HGVS-COL']: #HGVS change
-                    new_bins = {}
-                    vrs = "test2" #generateVRS()
-                    ll[len(collection_map['HEADER'])-1] = vrs
-                    if hgvs not in bins:
-                        new_bins[hgvs] = {
-                            "ID": id,
-                            "Interpretation": int
-                        }
-                    else:
-                        #Duplicate
-                        alert = 'true'
-                    #Update and save the bins
-                    new_bins = updateBins(new_bins)
-                    for hgvs in new_bins:
-                        bins[hgvs] = new_bins[hgvs]
-                    fileIO.writeBins(bins)
-    collection_map[id] = ll
-    fileIO.writeHistory(history)
-    fileIO.writeCollectionMap(collection_map)
-    fileIO.writeSnapshot()
+    trash_ids = request.form.get('trash')
+    id = suggestions.mergeEvent('syn',row,trash_ids)
     return redirect("/detail?id=" + id)
 
 def buildTable():
     collection_map = fileIO.readCollectionMap()
     header = collection_map['HEADER']
-    t = "<div>\n<table id=\"data-table\" class=\"viewer table table-striped table-bordered table-sm\">\n<thead>\n"
+    t = "<div class=\"p-3\">\n<table id=\"data-table\" class=\"viewer table table-striped table-bordered table-sm\">\n<thead>\n"
     ncol = len(header.fields)
-    t += "<tr id=\"HEADER\" class=\"trow\">"
+    t += "<tr id=\"HEADER\">"
     for v in header.fields:
-        t += "<th>" + v + "</th>"
+        t += "<th><div style=\"text-align: center;\">" + v + "</div></th>"
     t += "</tr>\n</thead>\n<tbody>\n"
     for id in collection_map:
         if id != 'HEADER':
             record = collection_map[id]
-            t += "<tr id=" + record.id + " class=\"trow\" onclick=select('"+ record.id + "')>"
+            t += "<tr id=" + record.id + ">"
             col = 0
             for v in record.fields:
                 if col < len(header.fields):
-                    t += "<td>" + v + "</td>"
+                    if col == 0:
+                        t += "<td style=\"vertical-align: middle;\"><div style=\"text-align: center;\"><span>" + v + "</span><br><input class=\"checks\" onclick=\"checkClicks()\" type=\"checkbox\" value=\"" + v + "\">\
+                        </div></td>"
+                    else:
+                        t += "<td style=\"vertical-align: middle;\" onclick=\"select('"+ record.id + "')\"><div style=\"text-align: center;\">" + v + "</div></td>"
                 col += 1
             t += "</tr>\n"
     t += "</tbody>\n</table>\n</div>"

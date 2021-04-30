@@ -25,10 +25,10 @@
    }
 </script>
 
-<div class="pb-2 mb-3 border-bottom">
+<div class="p-3 mb-3 border-bottom">
     <h1 class="h2">Getting started...</h1>
 </div>
-<div class="form-group">
+<div class="form-group pl-3 pr-3">
     <form id="upload_form" action="/upload" method="post" enctype="multipart/form-data" onsubmit="return false">
         <input  style="display:none" type="file" onchange="this.form.submit();" id="fileInput" accept=".csv" name="file" size="1" >
         <label class="btn btn-primary btn-sm" for="fileInput">Select .csv file</label>
@@ -37,7 +37,7 @@
     <span>The first column should contain unique identifiers</span>
 </div>
 
-<div class="form-group">
+<div class="form-group pl-3 pr-3">
     <form id="cols" action="/load" method="post" onsubmit="showInitializing();return false;"></form>
 </div>
 <script type="text/javascript">

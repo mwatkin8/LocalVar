@@ -1,8 +1,7 @@
 {% extends 'base.html' %}
 {% block body %}
-<p><a class="btn btn-small btn-primary" href="{{ filepath }}" download="{{ filename }}" >Download <img class="pb-1"src="../static/icons/download.svg"></img></a> &nbsp; &nbsp;{{ filename }}</p>
-<p>&nbsp;</p>
-<div style="height:100vh" id="file-view">
+<p class="p-3"><a class="btn btn-small btn-primary" href="{{ filepath }}" download="{{ filename }}" >Download <img class="pb-1"src="../static/icons/download.svg"></img></a> &nbsp; &nbsp;{{ filename }}</p>
+<div class="pl-3 pr-3"style="height:100vh" id="file-view">
   <pre>{{ content }}</pre>
 </div>
 

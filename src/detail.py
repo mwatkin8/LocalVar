@@ -7,7 +7,7 @@ def buildTable(header,record):
     tr = '<tr id=\"' + record.id + '\">'
     idx = 0
     for f in record.fields:
-        if idx == 0 or idx == len(f) - 1:
+        if idx == 0 or idx == len(header.fields) - 1:
             tr += '<td>' + f.strip() + '</td>\n'
         else:
             tr += '<td><div class=\"edit-cells\" contenteditable>' + f.strip() + '</div></td>\n'

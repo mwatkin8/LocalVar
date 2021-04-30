@@ -1,6 +1,29 @@
 {% extends 'base.html' %}
 {% block body %}
-    <div class="row mb-3">
+    <div id="merge-modal" class="merge-modal" style="display:{{ display }}">
+         <!-- The modal content -->
+         <div class="merge-modal-content text-center"><h4>Merge Records</h4>
+             {{ mergeTable|safe }}
+         </div>
+     </div>
+     <div id="merge-syn-modal" class="modal">
+          <!-- The modal content -->
+          <div class="modal-content text-center"><h4>Are you sure?</h4>
+              <div style="padding:50px;">
+                  <h6>Record <i id="syn-updated-id"></i> will be updated</h6>
+                  <h6>Record <i id="syn-removed-id"></i> will be moved to the trash</h6>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <button id="syn-confirm" class="btn btn-outline-success btn-block">Confirm</button>
+                 </div>
+                 <div class="col-md-6">
+                     <button onclick="mergeSynModal('hide','',[])"class="btn btn-outline-danger btn-block">Cancel</button>
+                  </div>
+              </div>
+          </div>
+     </div>
+    <div class="row mb-3 pt-3 pl-3 pr-3">
         <div class="col-md-6">
             <!--Make sure the form has the autocomplete function switched off:-->
               <div class="autocomplete" style="width:100%">
@@ -9,10 +32,12 @@
         </div>
         <div class="col-md-6 ml-0 pl-0">
             <button class="btn btn-primary mt-1" style="float:left;" onclick="searchSelect()"><img src="../static/icons/search.svg"></img></button>
-            <button class="btn btn-primary mt-1" style="float:right;" onclick="newEntry()"><img class="pb-1" src="../static/icons/plus.svg"></img> New Entry</button>
+            <button class="btn btn-primary mt-1" style="float:right;" onclick="newEntry()"><img class="pb-1" src="../static/icons/plus.svg"></img> New</button>
+            <button id="trash-button" class="btn btn-danger mt-1 ml-3" style="display:none;float:left;" onclick="checkBoxTrash()"><img class="pb-1" src="../static/icons/trash-white.svg"></img> Trash</button>
+            <button id="merge-button" class="btn btn-success mt-1 ml-3" style="display:none;float:left;" onclick="checkBoxMerge()"><img class="pb-1" src="../static/icons/share-2.svg"></img> Merge</button>
         </div>
     </div>
-    <div id="add-row" style="display:none;padding-left:20px;padding-right:20px" class="row">
+    <div id="add-row" style="display:none;" class="row pl-5 pr-3">
         <hr />
         <form id="new-entry-form" action="/new" method="post" onsubmit="showLoading();return false;">
         <div class="row">

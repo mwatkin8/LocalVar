@@ -1,11 +1,11 @@
 {% extends 'base.html' %}
 {% block body %}
-<div class="pb-2 mb-3 border-bottom ">
+<div class="p-3 mb-3 border-bottom ">
     <button class="btn btn-primary" onclick="back()"><img src="../static/icons/chevrons-left.svg"> Back</button>
-    <button style="float:right;display:inline" class="btn btn-sm btn-danger mt-1 ml-2"><img src="../static/icons/x.svg"></button><h4 class="mt-2"style="float:right">{{ id }} </h4>
+    <button style="float:right;display:inline" class="btn btn-sm btn-danger mt-1 ml-2" onclick=deleteRecord('{{ id }}')><img src="../static/icons/x.svg"></button><h4 class="mt-2"style="float:right">{{ id }} </h4>
 </div>
 
-<div>
+<div class="pl-3 pr-3">
     <table id="detail-table" class="table table-bordered table-sm mb-0">
         <thead style="background-color:#F8F9FA">
             <tr>
@@ -38,25 +38,12 @@
                     <h3 class="pt-3"> {{ hgvs }} </h3>
                     <h5>Interpretation: {{ int }} </h5>
                     <hr />
-                    <div class="row">
-                        <div class="col-md-2 mt-3">
-                            <h5 class="text-muted" style="font-weight:normal">Interpretation (ClinVar):</h5>
-                        </div>
-                        <div class="col-md-8 pl-0 ml-0 mt-3">
-                            <h5 class="text-muted" style="font-weight:normal"> {{ cv_int }}</h5>
-                        </div>
-                        <div class="col-md-2 mt-3">
-                            <a href="{{ evidence }}" class="btn btn-primary">Evidence <img class="pb-1"src="../static/icons/external-link.svg"></a>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-2 mt-3">
-                            <h5 class="text-muted" style="font-weight:normal">Synonym(s):</h5>
-                        </div>
-                        <div class="col-md-10 pl-0 ml-0 mt-3">
-                            <h5 class="text-muted" style="font-weight:normal"> {{ synonyms|safe }}</h5>
-                        </div>
-                    </div>
+                    <h5 style="display:inline; font-weight:normal" class="text-muted"><i>Interpretation (ClinVar)</i>:</h5>
+                    <a style="display:inline; float:right" href="{{ evidence }}" class="btn btn-primary">Evidence <img class="pb-1"src="../static/icons/external-link.svg"></a>
+                    <h5 class="text-muted" style="font-weight:normal"> {{ cv_int }}</h5>
+                    <br />
+                    <h5 class="text-muted" style="font-weight:normal"><i>Synonym(s)</i>:</h5>
+                    <h5 class="text-muted" style="font-weight:normal"> {{ synonyms|safe }}</h5>
                 </div>
             </div>
 
@@ -67,7 +54,7 @@
             <div class="row">
                 <div class="col-md-12">
                     <h3 style="font-weight: normal;" class="pt-3 pb-3 text-muted text-center">History</h3>
-                    <pre>{{ edits }}</pre>
+                    <pre>{{ edits|safe }}</pre>
                 </div>
             </div>
 

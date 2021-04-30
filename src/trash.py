@@ -7,7 +7,7 @@ def buildTrash():
     t = "<div>\n<table class=\"table table-striped table-bordered table-sm\">\n<thead>\n"
     t += "<tr id=\"HEADER\">"
     for v in trash['HEADER'].fields:
-        t += "<th>" + v + "</th>"
+        t += "<th><div style=\"text-align: center;\">" + v + "</div></th>"
     t += "</tr>\n</thead>\n<tbody>\n"
     rows = ''
     for id in trash:
@@ -16,8 +16,8 @@ def buildTrash():
             row = "<tr id=" + record.id + ">"
             for i in range(0,len(record.fields)):
                 if i == 0:
-                    row += "<td><button onclick=\"restore('" + id + "')\" class=\"btn btn-sm btn-primary\"><img src=\"../static/icons/rotate-ccw.svg\"></button> <button onclick=\"trashModal('true','" + id + "')\" class=\"btn btn-sm btn-danger\"><img src=\"../static/icons/trash-white.svg\"></button></td>"
-                row += "<td>" + record.fields[i] + "</td>"
+                    row += "<td style=\"vertical-align: middle;\"><div style=\"text-align: center;\"><button onclick=\"restore('" + id + "')\" class=\"btn btn-sm btn-primary\"><img src=\"../static/icons/rotate-ccw.svg\"></button> <button onclick=\"trashModal('true','" + id + "')\" class=\"btn btn-sm btn-danger\"><img src=\"../static/icons/trash-white.svg\"></button></div></td>"
+                row += "<td style=\"vertical-align: middle;\"><div style=\"text-align: center;\">" + record.fields[i] + "</div></td>"
             row += "</tr>\n"
             rows = row + rows
             total += 1
@@ -27,32 +27,33 @@ def buildTrash():
 def moveToTrash(id):
     bins = fileIO.readBins()
     collection_map = fileIO.readCollectionMap()
-    history = fileIO.readHistory()
-    trash = fileIO.readTrash()
-    trash["HEADER"] = collection_map["HEADER"]
-    history["entries"][id]["edits"].append({
-        "record moved to trash": timestamp()
-    })
-    record = collection_map[id]
-    hgvs = record.hgvs
-    trash[id] = {
-        "record": record,
-        "bin": bins[record.hgvs]
-    }
-    print(trash)
-    if bins[record.hgvs]["Duplicates"] == []:
-        del bins[record.hgvs]
-    else:
-        if bins[record.hgvs]["ID"] == id:
-            bins[record.hgvs]["ID"] = bins[record.hgvs]["Duplicates"][0]["ID"]
-            bins[record.hgvs]["Interpretation"] = bins[record.hgvs]["Duplicates"][0]["Interpretation"]
-            del bins[record.hgvs]["Duplicates"][0]
-    del collection_map[id]
-    fileIO.writeCollectionMap(collection_map)
-    fileIO.writeSnapshot()
-    fileIO.writeBins(bins)
-    fileIO.writeHistory(history)
-    fileIO.writeTrash(trash)
+    if id in collection_map:
+        history = fileIO.readHistory()
+        trash = fileIO.readTrash()
+        trash["HEADER"] = collection_map["HEADER"]
+        history["entries"][id]["edits"].append({
+            "record moved to trash": timestamp()
+        })
+        record = collection_map[id]
+        hgvs = record.hgvs
+        trash[id] = {
+            "record": record,
+            "bin": bins[record.hgvs]
+        }
+        print(trash)
+        if bins[record.hgvs]["Duplicates"] == []:
+            del bins[record.hgvs]
+        else:
+            if bins[record.hgvs]["ID"] == id:
+                bins[record.hgvs]["ID"] = bins[record.hgvs]["Duplicates"][0]["ID"]
+                bins[record.hgvs]["Interpretation"] = bins[record.hgvs]["Duplicates"][0]["Interpretation"]
+                del bins[record.hgvs]["Duplicates"][0]
+        del collection_map[id]
+        fileIO.writeCollectionMap(collection_map)
+        fileIO.writeSnapshot()
+        fileIO.writeBins(bins)
+        fileIO.writeHistory(history)
+        fileIO.writeTrash(trash)
 
 def restoreRecord(id,trash,history):
     bins = fileIO.readBins()

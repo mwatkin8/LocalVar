@@ -129,7 +129,7 @@ def buildDupTable(header,record,hgvs,dups,collection_map):
     table = "<div class=\"mt-4 media rounded box-shadow\">\
                 <div class=\"media-body pb-3 mb-0 lh-125\">\
                     <div>\
-                        <table id=\"data-table\" class=\"table table-bordered table-sm mb-1\">\
+                        <table class=\"table table-bordered table-sm mb-1\">\
                             <thead>\
                                 <tr id=\"HEADER\">"
     #First, add the column names as a header row of the table
@@ -189,7 +189,7 @@ def buildDupRow(header,record,hgvs):
         col += 1
     return row
 
-def dupMergeEvent(row,trash_ids):
+def mergeEvent(type,row,trash_ids):
     ids = trash_ids.split(',')
     for id in ids:
         trash.moveToTrash(id)
@@ -199,21 +199,38 @@ def dupMergeEvent(row,trash_ids):
     row = row.replace('&lt;','<')
     row = row.replace('&gt;','>')
     fields = row.split(',')
-    recordCRUD.editRecord(fields)
+    recordCRUD.editRecord(type,fields)
     return fields[0]
+
+def manualMerge(ids):
+    id_list = ids.split(',')
+    map = {
+        id_list[0]:id_list[1:]
+    }
+    collection_map = fileIO.readCollectionMap()
+    header = collection_map['HEADER']
+    record = collection_map[id_list[0]]
+    return buildSynTable('manual',header,record,map,collection_map)
 
 def synMerge():
     list = ''
     count = 0
     collection_map = fileIO.readCollectionMap()
+    suggestion_map = fileIO.readSuggestionMap()
     syn_map = findSyns(collection_map)
     if syn_map != {}:
-        print(syn_map)
         for id in syn_map:
-            count += 1
-            header = collection_map["HEADER"]
-            record = collection_map[id]
-            list = buildSynTable(header,record,syn_map,collection_map)
+            unique = id + '|'
+            for sid in syn_map[id]:
+                unique += sid + '|'
+            unique = unique[:-1]
+            print(unique)
+            print(suggestion_map["SYN"])
+            if unique not in suggestion_map["SYN"]:
+                count += 1
+                header = collection_map["HEADER"]
+                record = collection_map[id]
+                list += buildSynTable('syn',header,record,syn_map,collection_map)
     return list,count
 
 def findSyns(collection_map):
@@ -230,13 +247,15 @@ def findSyns(collection_map):
                 for syn in bins[h]["ClinVar Synonyms"]:
                     if collection_map[id].hgvs == syn["HGVS"]:
                         if id in syn_map:
-                            syn_map[id].append(bins[h]["ID"])
+                                syn_map[id].append(bins[h]["ID"])
                         else:
-                            syn_map[id] = [bins[h]["ID"]]
+                            if bins[h]["ID"] not in syn_map and id != bins[h]["ID"]:
+                                syn_map[id] = [bins[h]["ID"]]
                         break
+    print(syn_map)
     return syn_map
 
-def buildSynTable(header,record,syn_map,collection_map):
+def buildSynTable(type,header,record,syn_map,collection_map):
     ids = [record.id]
     vrs = record.vrs
     unique = str(random.randint(0,1000000))
@@ -244,7 +263,7 @@ def buildSynTable(header,record,syn_map,collection_map):
     table = "<div class=\"mt-4 media rounded box-shadow\">\
                 <div class=\"media-body pb-3 mb-0 lh-125\">\
                     <div>\
-                        <table id=\"data-table\" class=\"table table-bordered table-sm mb-1\">\
+                        <table class=\"table table-bordered table-sm mb-1\">\
                             <thead>\
                                 <tr id=\"HEADER\">"
     #First, add the column names as a header row of the table
@@ -277,9 +296,12 @@ def buildSynTable(header,record,syn_map,collection_map):
                             </tbody>\
                         </table>\
                     </div>\
-                    <div class=\"ml-3\" style=\"text-align:center\">\
-                        <button class=\"btn btn-sm btn-outline-success\" onclick=\"mergeSynModal('show','" + unique + "','" + ','.join(ids) + "')\"> Merge </button> <button class=\"btn btn-sm btn-outline-danger\" onclick=\"suggestModal('true')\">Ignore</button>\
-                    </div>\
+                    <div class=\"ml-3\" style=\"text-align:center\">"
+    if type == 'syn':
+        table +=        "<button class=\"btn btn-sm btn-outline-success\" onclick=\"mergeSynModal('show','" + unique + "','" + ','.join(ids) + "')\"> Merge </button> <button class=\"btn btn-sm btn-outline-danger\" onclick=\"removeSynMerge('" + '|'.join(ids) + "')\">Ignore</button>"
+    else:
+        table +=        "<button class=\"btn btn-sm btn-outline-success\" onclick=\"mergeSynModal('show','" + unique + "','" + ','.join(ids) + "')\"> Merge </button> <button class=\"btn btn-sm btn-outline-danger\" onclick=\"hideManMerge()\">Cancel</button>"
+    table +=        "</div>\
                 </div>\
             </div>"
     return table
